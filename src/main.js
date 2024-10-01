@@ -65,7 +65,7 @@ const routes = createRouter({//history untuk melihat history perpindahan lama we
 
 // --- Auth User ---
 const loginCheck = reactive({
-    loggedIn: false,  // To track login status
+    loggedIn: true,  // To track login status
     firstName: ''     // To store the first name of the logged-in user
   });
 
