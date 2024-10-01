@@ -5,6 +5,7 @@
   </div>
   <div v-show="!loading">
     <div class="form-group">
+      <div class="form-group">
       <label for="firstName">First Name</label>
       <input id="firstName" class="form-control" type="text" v-model="user.firstName" />
     </div>
@@ -12,7 +13,6 @@
       <label for="lastName">Last Name</label>
       <input id="lastName" class="form-control" type="text" v-model="user.lastName" />
     </div>
-    <div class="form-group">
       <label for="nick">Name</label>
       <input id="nick" class="form-control" type="text" v-model="user.nick" />
     </div>
@@ -38,30 +38,28 @@ export default {
         nick: '',
         pass: ''
       },
+      
     };
   },
   methods: {
     goToArticle() {
-      this.$router.push('/'); // Redirect to the homepage after successful login
+      this.$router.push('/');
     },
     login() {
       this.loading = true;
-      // Fetch the local db.json file
-      axios.get('./db.json') // Make sure to use the correct path to your db.json
+      axios.get(`http://localhost:2002/users?nick=${this.user.nick}&pass=${this.user.pass}`)
         .then(response => {
-          // Filter users based on nick and pass
-          const user = response.data.users.find(u => u.nick === this.user.nick && u.pass === this.user.pass);
-          if (user) {
+          if (response.data.length > 0) {
             // Update the global state with user info
             this.loginCheck.loggedIn = true;
-            this.loginCheck.firstName = user.firstName;
+            this.loginCheck.firstName = response.data[0].firstName;
 
             this.$toast.success('Login successful', {
               position: 'bottom',
               duration: 2000
             });
             this.goToArticle();
-            console.log('User found:', user);
+            console.log('User found:', response.data);
           } else {
             this.$toast.error('User not found', {
               position: 'bottom',
@@ -80,7 +78,7 @@ export default {
         .finally(() => {
           this.loading = false;
         });
-      console.log(this.user.firstName);
+        console.log(this.user.firstName);
     }
   }
 };
